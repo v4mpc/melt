@@ -40,7 +40,6 @@ class _LoginPageState extends State<LoginPage>
     });
 
     if (_pin.length < 4) {
-      print('pin less than 4');
       _animationController.stop();
     }
   }
@@ -60,7 +59,7 @@ class _LoginPageState extends State<LoginPage>
     });
 
     if (_pin.length == 4) {
-      print('pin is 4');
+
       _animationController.repeat();
     }
   }
@@ -146,7 +145,7 @@ class InputDisplay extends StatelessWidget {
           Radius.circular(20),
         ),
         color: Colors.grey,
-        border: Border.all(width: 3.0, color: Theme.of(context).primaryColor),
+        border: Border.all(width: 3.0, color: displayInput?Theme.of(context).primaryColor:Colors.grey),
       ),
       child: Text(
         displayInput ? '*' : '',
