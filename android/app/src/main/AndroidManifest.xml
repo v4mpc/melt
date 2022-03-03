@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.melt">
-   <application
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
         android:label="melt"
         android:icon="@mipmap/ic_launcher">
         <activity

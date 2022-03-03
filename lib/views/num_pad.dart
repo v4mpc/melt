@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class NumPad extends StatelessWidget {
-
   final Function deleteFn;
   final Function setPinFn;
-  const NumPad({Key? key,required this.deleteFn,required this.setPinFn}) : super(key: key);
+
+  const NumPad({Key? key, required this.deleteFn, required this.setPinFn})
+      : super(key: key);
   final fontSize = 50.0;
   final List<String> _keys = const [
     '1',
@@ -37,16 +39,14 @@ class NumPad extends StatelessWidget {
           _keys[i] == 'back_space'
               ? MyIconButton(
                   iconData: Icons.backspace,
-                deleteFn: deleteFn,
+                  deleteFn: deleteFn,
                 )
-              : NumButton
-            (
+              : NumButton(
                   labelText: _keys[i],
-            setPinFn: setPinFn,
+                  setPinFn: setPinFn,
                 ),
           NumButton(
             setPinFn: setPinFn,
-
             labelText: _keys[i + 1],
           ),
           _keys[i + 2] == 'OK'
@@ -54,9 +54,8 @@ class NumPad extends StatelessWidget {
                   iconData: Icons.done,
                 )
               : NumButton(
-            setPinFn: setPinFn,
-
-            labelText: _keys[i + 2],
+                  setPinFn: setPinFn,
+                  labelText: _keys[i + 2],
                 ),
         ],
       ));
@@ -75,12 +74,16 @@ class MyIconButton extends StatelessWidget {
   final IconData iconData;
   final Function? deleteFn;
 
-  const MyIconButton({Key? key, required this.iconData,this.deleteFn}) : super(key: key);
+  const MyIconButton({Key? key, required this.iconData, this.deleteFn})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () =>deleteFn!(),
+      onPressed: () {
+        HapticFeedback.heavyImpact();
+        deleteFn!();
+      },
       icon: Icon(iconData),
     );
   }
@@ -91,14 +94,20 @@ class NumButton extends StatelessWidget {
   final String labelText;
   final Function setPinFn;
 
-
-  const NumButton({Key? key, this.fontSize = 50, required this.labelText,required this.setPinFn})
+  const NumButton(
+      {Key? key,
+      this.fontSize = 50,
+      required this.labelText,
+      required this.setPinFn})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: ()=>setPinFn(labelText),
+      onPressed: () {
+        HapticFeedback.heavyImpact();
+        setPinFn(labelText);
+      },
       child: Text(
         labelText,
         style: Theme.of(context).textTheme.headline5!.copyWith(

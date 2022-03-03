@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:melt/views/num_pad.dart';
+import 'package:flutter/services.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -43,7 +45,14 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
+  void resetPin(){
+    setState(() {
+      _pin='';
+    });
+    _animationController.reset();
+  }
   void setPin(String pin) {
+
     setState(() {
       if (_pin.length < 4) {
         _pin += pin;
@@ -64,7 +73,7 @@ class _LoginPageState extends State<LoginPage>
           child: Column(
             children: [
               Expanded(
-                flex: 3,
+                flex: 4,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -112,8 +121,7 @@ class InputDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
+    return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -125,6 +133,8 @@ class InputDisplay extends StatelessWidget {
       ),
     );
   }
+
+  //TODO : add HapticFeedback.heavyImpact();
 
   Widget _buildContainer(BuildContext context, bool displayInput) {
     return Container(
