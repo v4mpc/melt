@@ -4,8 +4,13 @@ import 'package:flutter/services.dart';
 class NumPad extends StatelessWidget {
   final Function deleteFn;
   final Function setPinFn;
+  final bool disableInputs;
 
-  const NumPad({Key? key, required this.deleteFn, required this.setPinFn})
+  const NumPad(
+      {Key? key,
+      required this.deleteFn,
+      required this.setPinFn,
+      this.disableInputs = false})
       : super(key: key);
   final fontSize = 50.0;
   final List<String> _keys = const [
@@ -44,10 +49,12 @@ class NumPad extends StatelessWidget {
               : NumButton(
                   labelText: _keys[i],
                   setPinFn: setPinFn,
+                  disableInputs: disableInputs,
                 ),
           NumButton(
             setPinFn: setPinFn,
             labelText: _keys[i + 1],
+            disableInputs: disableInputs,
           ),
           _keys[i + 2] == 'OK'
               ? const MyIconButton(
@@ -56,6 +63,7 @@ class NumPad extends StatelessWidget {
               : NumButton(
                   setPinFn: setPinFn,
                   labelText: _keys[i + 2],
+                  disableInputs: disableInputs,
                 ),
         ],
       ));
@@ -93,21 +101,26 @@ class NumButton extends StatelessWidget {
   final double fontSize;
   final String labelText;
   final Function setPinFn;
+  final bool disableInputs;
 
-  const NumButton(
-      {Key? key,
-      this.fontSize = 50,
-      required this.labelText,
-      required this.setPinFn})
-      : super(key: key);
+  const NumButton({
+    Key? key,
+    this.fontSize = 50,
+    required this.labelText,
+    this.disableInputs = false,
+    required this.setPinFn,
+  }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        HapticFeedback.heavyImpact();
-        setPinFn(labelText);
-      },
+      onPressed: disableInputs
+          ? null
+          : () {
+              HapticFeedback.heavyImpact();
+              setPinFn(labelText);
+            },
       child: Text(
         labelText,
         style: Theme.of(context).textTheme.headline5!.copyWith(

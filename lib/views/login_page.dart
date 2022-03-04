@@ -3,6 +3,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:melt/views/num_pad.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../storage_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -16,12 +17,17 @@ class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   String _pin = '';
   bool hasError = false;
+  bool disableInputs = false;
+
+  final StorageService _storage = StorageService();
 
   late AnimationController _animationController;
 
   @override
   void initState() {
-    final storage = FlutterSecureStorage();
+    print('adding pin');
+    _storage.addItem('pin', '1234');
+    print('added pin');
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 5000),
       vsync: this,
@@ -54,16 +60,30 @@ class _LoginPageState extends State<LoginPage>
     _animationController.reset();
   }
 
-  void setPin(String pin) {
+  void setPin(String pin) async {
     setState(() {
       if (_pin.length < 4) {
         _pin += pin;
-        hasError=false;
+        hasError = false;
       }
     });
 
     if (_pin.length == 4) {
+      print('authenticating...');
       _animationController.repeat();
+      disableInputs = true;
+      final bool shouldLogin = await _storage.authenticated(_pin);
+      if (shouldLogin) {
+        print('Your authenticated');
+      } else {
+        print('Not authenticated');
+        setState(() {
+          _pin = '';
+          hasError = true;
+        });
+        disableInputs = false;
+        _animationController.stop();
+      }
     }
   }
 
@@ -118,7 +138,11 @@ class _LoginPageState extends State<LoginPage>
                 ),
               Expanded(
                 flex: 7,
-                child: NumPad(deleteFn: deletePin, setPinFn: setPin),
+                child: NumPad(
+                  deleteFn: deletePin,
+                  setPinFn: setPin,
+                  disableInputs: disableInputs,
+                ),
               ),
             ],
           ),
