@@ -86,7 +86,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Text(
                   'Enter PIN',
                   style: Theme.of(context).textTheme.headline4!.copyWith(
