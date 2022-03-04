@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:melt/views/num_pad.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -11,14 +11,17 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
+// TODO : disable auto backups => https://pub.dev/packages/flutter_secure_storage
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   String _pin = '';
+  bool hasError = false;
 
   late AnimationController _animationController;
 
   @override
   void initState() {
+    final storage = FlutterSecureStorage();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 5000),
       vsync: this,
@@ -44,22 +47,22 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
-  void resetPin(){
+  void resetPin() {
     setState(() {
-      _pin='';
+      _pin = '';
     });
     _animationController.reset();
   }
-  void setPin(String pin) {
 
+  void setPin(String pin) {
     setState(() {
       if (_pin.length < 4) {
         _pin += pin;
+        hasError=false;
       }
     });
 
     if (_pin.length == 4) {
-
       _animationController.repeat();
     }
   }
@@ -99,8 +102,20 @@ class _LoginPageState extends State<LoginPage>
                 flex: 2,
                 child: InputDisplay(
                   pin: _pin,
+                  hasError: hasError,
                 ),
               ),
+              if (hasError)
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    'Incorrect PIN entered',
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: Theme.of(context).errorColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
               Expanded(
                 flex: 7,
                 child: NumPad(deleteFn: deletePin, setPinFn: setPin),
@@ -115,25 +130,37 @@ class _LoginPageState extends State<LoginPage>
 
 class InputDisplay extends StatelessWidget {
   final String pin;
+  final bool hasError;
 
-  const InputDisplay({Key? key, this.pin = ''}) : super(key: key);
+  const InputDisplay({Key? key, this.pin = '', this.hasError = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildContainer(context, pin.isNotEmpty ? true : false),
-          _buildContainer(context, pin.length >= 2 ? true : false),
-          _buildContainer(context, pin.length >= 3 ? true : false),
-          _buildContainer(context, pin.length >= 4 ? true : false)
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildContainer(context, pin.isNotEmpty ? true : false),
+        _buildContainer(context, pin.length >= 2 ? true : false),
+        _buildContainer(context, pin.length >= 3 ? true : false),
+        _buildContainer(context, pin.length >= 4 ? true : false)
+      ],
     );
   }
 
   //TODO : add HapticFeedback.heavyImpact();
+
+  Color _buildBorderColor(BuildContext context, bool displayInput) {
+    if (displayInput) {
+      return Theme.of(context).primaryColor;
+    } else {
+      if (hasError) {
+        return Theme.of(context).errorColor;
+      } else {
+        return Colors.grey;
+      }
+    }
+  }
 
   Widget _buildContainer(BuildContext context, bool displayInput) {
     return Container(
@@ -145,7 +172,10 @@ class InputDisplay extends StatelessWidget {
           Radius.circular(20),
         ),
         color: Colors.grey,
-        border: Border.all(width: 3.0, color: displayInput?Theme.of(context).primaryColor:Colors.grey),
+        border: Border.all(
+          width: 3.0,
+          color: _buildBorderColor(context, displayInput),
+        ),
       ),
       child: Text(
         displayInput ? '*' : '',
