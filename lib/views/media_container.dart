@@ -2,16 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MediaContainer extends StatelessWidget {
-  final String imagePath;
+  final String mediaPath;
   final String mediaDuration;
   final double borderRadius;
+  final bool showCheckBoxes;
+  final bool selected;
 
-  const MediaContainer(
-      {Key? key,
-      required this.imagePath,
-      this.mediaDuration = '',
-      this.borderRadius = 10})
-      : super(key: key);
+  const MediaContainer({
+    Key? key,
+    this.selected=false,
+    this.showCheckBoxes = false,
+    required this.mediaPath,
+    this.mediaDuration = '3',
+    this.borderRadius = 10,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,7 @@ class MediaContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRadius),
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage(imagePath),
+                image: AssetImage(mediaPath),
               )),
         ),
         if (mediaDuration.isNotEmpty)
@@ -35,7 +39,7 @@ class MediaContainer extends StatelessWidget {
             bottom: 5,
             left: 5,
           ),
-        _buildSelectionOverlay(context),
+        if (showCheckBoxes) _buildSelectionOverlay(context),
       ],
     );
   }
@@ -84,7 +88,7 @@ class MediaContainer extends StatelessWidget {
           child: Checkbox(
             activeColor: Theme.of(context).primaryColor,
             shape: const CircleBorder(),
-            value: false,
+            value: selected,
             onChanged: (bool? value) {},
           ),
         ),
