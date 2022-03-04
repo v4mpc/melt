@@ -44,6 +44,9 @@ v4mpc.*
 v4mpc1.*
 v4mpc2.*
 v4mpc3.*
+vampc.*
+yona-thumb.*
+yona.*
 
 # Android Studio will place build artifacts here
 /android/app/debug
