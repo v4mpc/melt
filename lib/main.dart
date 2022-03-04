@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'themes/custome_theme.dart';
 import 'views/login_page.dart';
+import 'views/all_media_page.dart';
 
 void main() {
   runApp(
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Melt',
       theme: CustomTheme.darkTheme,
-      home: LoginPage(),
+      home: AllMediaPage(),
     );
   }
 }

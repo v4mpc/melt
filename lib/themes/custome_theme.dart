@@ -9,6 +9,11 @@ class CustomTheme {
     final ThemeData base = ThemeData.dark();
     // final ThemeData base = ThemeData.light();
     return base.copyWith(
+      appBarTheme: base.appBarTheme.copyWith(
+        color: _primaryColor,
+        foregroundColor: Colors.black
+
+      ),
       primaryColor: _primaryColor,
       inputDecorationTheme: InputDecorationTheme(
         contentPadding: const EdgeInsets.all(3),

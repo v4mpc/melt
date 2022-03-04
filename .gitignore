@@ -40,6 +40,11 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+v4mpc.*
+v4mpc1.*
+v4mpc2.*
+v4mpc3.*
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
