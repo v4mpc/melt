@@ -25,22 +25,65 @@ class AllMediaPage extends StatelessWidget {
   }
 }
 
-class UsableArea extends StatelessWidget {
-  UsableArea({Key? key}) : super(key: key);
+class UsableArea extends StatefulWidget {
+  const UsableArea({Key? key}) : super(key: key);
 
-  final List<String> files = const ['sge'];
-  final ImagePicker _picker = ImagePicker();
+  @override
+  State<UsableArea> createState() => _UsableAreaState();
+}
+
+class _UsableAreaState extends State<UsableArea>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 400),
+    vsync: this,
+  );
+
+
+  late final Animation<Offset> _floatingActionButtonOffsetAnimation =
+      Tween<Offset>(
+    begin: Offset.zero,
+    end: const Offset(0.0, 2.5),
+  ).animate(
+    CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.200, curve: Curves.linear),
+    ),
+  );
+
+  late final Animation<Offset> _bottomAppBarOffsetAnimation = Tween<Offset>(
+    begin:const Offset(0.0, 1.5),
+    end: Offset.zero ,
+  ).animate(
+    CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.310, 0.400, curve: Curves.linear),
+    ),
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    // _bottomAppBarAnimationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final MediaService mediaService = Provider.of<MediaService>(context);
     final Counter counter = Provider.of<Counter>(context);
 
+    if (mediaService.showCheckBoxes) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+
     return WillPopScope(
-      onWillPop: ()async{
-        if(mediaService.showCheckBoxes){
-          mediaService.toggleShowCheckBoxes=false;
-          counter.setCounter=0;
+      onWillPop: () async {
+        if (mediaService.showCheckBoxes) {
+          mediaService.toggleShowCheckBoxes = false;
+          counter.setCounter = 0;
           return false;
         }
         return true;
@@ -48,13 +91,11 @@ class UsableArea extends StatelessWidget {
       child: Scaffold(
         appBar: const MyAppBar(),
         body: const MyBody(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            // Pick an image
-            final XFile? image =
-                await _picker.pickImage(source: ImageSource.gallery);
-          },
-          child: const Icon(Icons.add),
+        floatingActionButton: AnimatedFloatingActionButton(
+          offsetAnimation: _floatingActionButtonOffsetAnimation,
+        ),
+        bottomNavigationBar: AnimatedBottomAppBar(
+          offsetAnimation: _bottomAppBarOffsetAnimation,
         ),
       ),
     );
@@ -78,9 +119,9 @@ class MyAppBar extends StatelessWidget with PreferredSizeWidget {
           shape: const CircleBorder(),
           value: myCounter.value == mediaService.allMedia.length,
           onChanged: (bool? value) {
-            bool newValue=value ?? false;
+            bool newValue = value ?? false;
             mediaService.toggleSelections = newValue;
-            myCounter.setCounter=newValue?mediaService.allMedia.length:0;
+            myCounter.setCounter = newValue ? mediaService.allMedia.length : 0;
           },
         ),
         visible: mediaService.showCheckBoxes,
@@ -153,5 +194,66 @@ class MyBody extends StatelessWidget {
               itemCount: mediaService.allMedia.length,
             ),
           );
+  }
+}
+
+class AnimatedFloatingActionButton extends StatelessWidget {
+  // todo: listen for only showcheckboxes
+
+  final Animation<Offset> offsetAnimation;
+
+  const AnimatedFloatingActionButton({Key? key, required this.offsetAnimation})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideTransition(
+      position: offsetAnimation,
+      child: FloatingActionButton(
+        onPressed: () async {},
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class AnimatedBottomAppBar extends StatelessWidget {
+  final Animation<Offset> offsetAnimation;
+
+  const AnimatedBottomAppBar({Key? key, required this.offsetAnimation})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideTransition(
+      position: offsetAnimation,
+      child: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+              onPressed: () {},
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const <Widget>[
+                  Icon(Icons.delete),
+                  Text('Delete'),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const <Widget>[
+                  Icon(Icons.restore),
+                  Text('Restore'),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
