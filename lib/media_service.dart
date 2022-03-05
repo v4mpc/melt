@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 class MediaService with ChangeNotifier {
   int selectedCount = 0;
-  bool _showCheckBox = true;
+  bool _showCheckBox = false;
 
   //todo: optimize that changes in single media only rebuilds that media instead of whole list
   List<Media> _media = [
@@ -22,6 +22,16 @@ class MediaService with ChangeNotifier {
   List<Media> get allMedia => _media;
 
   bool get showCheckBoxes => _showCheckBox;
+
+  set toggleShowCheckBoxes(bool value ){
+    _showCheckBox=value;
+    if(value==false){
+      for (Media m in _media) {
+        m.selected = false;
+      }
+    }
+    notifyListeners();
+  }
 
   set toggleSelections(bool status) {
     for (Media m in _media) {

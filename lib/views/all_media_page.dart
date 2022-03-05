@@ -33,17 +33,29 @@ class UsableArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('building entire scaffold');
-    return Scaffold(
-      appBar: const MyAppBar(),
-      body: const MyBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Pick an image
-          final XFile? image =
-              await _picker.pickImage(source: ImageSource.gallery);
-        },
-        child: const Icon(Icons.add),
+    final MediaService mediaService = Provider.of<MediaService>(context);
+    final Counter counter = Provider.of<Counter>(context);
+
+    return WillPopScope(
+      onWillPop: ()async{
+        if(mediaService.showCheckBoxes){
+          mediaService.toggleShowCheckBoxes=false;
+          counter.setCounter=0;
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: const MyAppBar(),
+        body: const MyBody(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            // Pick an image
+            final XFile? image =
+                await _picker.pickImage(source: ImageSource.gallery);
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
