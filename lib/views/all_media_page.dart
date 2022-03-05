@@ -40,6 +40,8 @@ class _UsableAreaState extends State<UsableArea>
   );
 
 
+  //todo : hide bottom app bar if no any selected item
+
   late final Animation<Offset> _floatingActionButtonOffsetAnimation =
       Tween<Offset>(
     begin: Offset.zero,
@@ -105,6 +107,7 @@ class _UsableAreaState extends State<UsableArea>
 
 class MyAppBar extends StatelessWidget with PreferredSizeWidget {
   const MyAppBar({Key? key}) : super(key: key);
+  //todo tiltle should move little to the left
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
