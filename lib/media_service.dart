@@ -7,24 +7,14 @@ class MediaService with ChangeNotifier {
   //todo: optimize that changes in single media only rebuilds that media instead of whole list
   List<Media> _media = [
     Media(
-        selected: true,
-        mediaPath: '',
-        mediaRestorePath: '',
-        mediaThumbPath: 'assets/vampc.jpeg'),
-    Media(
-        mediaPath: '', mediaRestorePath: '', mediaThumbPath: 'assets/yona.jpg'),
-    Media(
-        mediaPath: '',
-        mediaRestorePath: '',
-        mediaThumbPath: 'assets/v4mpc.jpeg'),
-    Media(
-        mediaPath: '',
-        mediaRestorePath: '',
-        mediaThumbPath: 'assets/yona-thumb.jpg'),
-    Media(
-        mediaPath: '',
-        mediaRestorePath: '',
-        mediaThumbPath: 'assets/v4mpc1.jpeg'),
+        selected: false,
+        path: '',
+        restorePath: '',
+        thumbPath: 'assets/vampc.jpeg'),
+    Media(path: '', restorePath: '', thumbPath: 'assets/yona.jpg'),
+    Media(path: '', restorePath: '', thumbPath: 'assets/v4mpc.jpeg'),
+    Media(path: '', restorePath: '', thumbPath: 'assets/yona-thumb.jpg'),
+    Media(path: '', restorePath: '', thumbPath: 'assets/v4mpc1.jpeg'),
   ];
 
   int get selectCount => _media.where((Media media) => media.selected).length;
@@ -39,19 +29,45 @@ class MediaService with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  set updateMedia(Media media){
+    int index=_media.indexOf(media);
+    _media[index]=media;
+  }
 }
 
-class Media {
-  String mediaThumbPath;
-  String mediaPath;
-  String mediaRestorePath;
-  bool selected;
-  String mediaDuration;
+class Counter with ChangeNotifier{
+  int value;
+  Counter({this.value=0});
 
-  Media(
-      {required this.mediaThumbPath,
-      this.mediaDuration = '',
-      this.selected = false,
-      required this.mediaPath,
-      required this.mediaRestorePath});
+  set changeCounter(int newValue){
+    value+=newValue;
+    notifyListeners();
+  }
+
+  set setCounter(int newValue){
+    value=newValue;
+    notifyListeners();
+  }
+}
+
+class Media with ChangeNotifier {
+  String thumbPath;
+  String path;
+  String restorePath;
+  bool selected;
+  String duration;
+
+  Media({
+    required this.thumbPath,
+    this.duration = '',
+    this.selected = false,
+    required this.path,
+    required this.restorePath,
+  });
+
+  set toggleSelect(bool status) {
+    selected = status;
+    notifyListeners();
+  }
 }

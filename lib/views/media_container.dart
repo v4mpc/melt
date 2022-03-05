@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:melt/media_service.dart';
 
 class MediaContainer extends StatelessWidget {
   final String mediaPath;
@@ -10,7 +12,7 @@ class MediaContainer extends StatelessWidget {
 
   const MediaContainer({
     Key? key,
-    this.selected=false,
+    this.selected = false,
     this.showCheckBoxes = false,
     required this.mediaPath,
     this.mediaDuration = '3',
@@ -19,6 +21,8 @@ class MediaContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Media media = Provider.of<Media>(context);
+    Counter counter=Provider.of<Counter>(context);
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -33,18 +37,18 @@ class MediaContainer extends StatelessWidget {
                 image: AssetImage(mediaPath),
               )),
         ),
-        if (mediaDuration.isNotEmpty)
+        if (media.duration.isNotEmpty)
           Positioned(
-            child: _buildVideoIndicator(context, '0:16'),
+            child: _buildVideoIndicator(context, media),
             bottom: 5,
             left: 5,
           ),
-        if (showCheckBoxes) _buildSelectionOverlay(context),
+        if (showCheckBoxes) _buildSelectionOverlay(context, media,counter),
       ],
     );
   }
 
-  Widget _buildVideoIndicator(BuildContext context, String time) {
+  Widget _buildVideoIndicator(BuildContext context, Media media) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -61,10 +65,11 @@ class MediaContainer extends StatelessWidget {
               size: 20,
             ),
             Text(
-              '24:59',
+              media.duration,
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+              ),
             )
           ],
         ),
@@ -72,7 +77,7 @@ class MediaContainer extends StatelessWidget {
     );
   }
 
-  Widget _buildSelectionOverlay(BuildContext context) {
+  Widget _buildSelectionOverlay(BuildContext context, Media media,Counter counter) {
     return Stack(
       // fit: StackFit.expand,
       children: [
@@ -88,8 +93,14 @@ class MediaContainer extends StatelessWidget {
           child: Checkbox(
             activeColor: Theme.of(context).primaryColor,
             shape: const CircleBorder(),
-            value: selected,
-            onChanged: (bool? value) {},
+            value: media.selected,
+            onChanged: (bool? value) {
+              bool newValue=value ?? false;
+              media.toggleSelect = newValue;
+              counter.changeCounter=newValue?1:-1;
+
+
+            },
           ),
         ),
       ],
