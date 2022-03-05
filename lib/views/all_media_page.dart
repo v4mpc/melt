@@ -35,7 +35,7 @@ class UsableArea extends StatefulWidget {
 class _UsableAreaState extends State<UsableArea>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(milliseconds: 400),
+    duration: const Duration(milliseconds: 500),
     vsync: this,
   );
 
@@ -57,7 +57,7 @@ class _UsableAreaState extends State<UsableArea>
   ).animate(
     CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.310, 0.400, curve: Curves.linear),
+      curve: const Interval(0.310, 0.500, curve: Curves.linear),
     ),
   );
 
@@ -94,6 +94,7 @@ class _UsableAreaState extends State<UsableArea>
         floatingActionButton: AnimatedFloatingActionButton(
           offsetAnimation: _floatingActionButtonOffsetAnimation,
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         bottomNavigationBar: AnimatedBottomAppBar(
           offsetAnimation: _bottomAppBarOffsetAnimation,
         ),
